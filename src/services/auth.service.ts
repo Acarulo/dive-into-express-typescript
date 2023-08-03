@@ -1,6 +1,7 @@
 import { Auth } from "../interfaces/auth.interface";
 import { User } from "../interfaces/user.interface";
 import UserModel from "../models/user.schema"
+import { generateToken } from "../utils/jwt.handler";
 import { encrypt, verify } from "../utils/password.handler";
 
 const registerNewUser = async(authUser: User) => {
@@ -21,6 +22,13 @@ const loginUser = async({email, password}: Auth) => {
     const passwordIsCorrect = await verify(password, passwordHash);
 
     if(!passwordIsCorrect) return "INCORRECT_PASSWORD";
+    
+    const token = generateToken(userExists.email);
+    const data = {
+        token: token,
+        user: userExists
+
+    }
 
     return userExists;
 }
